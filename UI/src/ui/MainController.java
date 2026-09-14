@@ -951,7 +951,14 @@ public class MainController {
         );
         content.setPadding(new Insets(15.0));
         content.setPrefWidth(360.0);
-        dialog.getDialogPane().setContent(content);
+
+        // Order Book's fields are taller than LMSR's - without a scroll pane, switching to Order
+        // Book can grow the dialog past the screen height and push the OK/Cancel buttons off-screen.
+        ScrollPane contentScroll = new ScrollPane(content);
+        contentScroll.setFitToWidth(true);
+        contentScroll.setPrefViewportHeight(420.0);
+        contentScroll.setStyle("-fx-background-color: transparent;");
+        dialog.getDialogPane().setContent(contentScroll);
 
         java.util.Optional<ButtonType> result = dialog.showAndWait();
         if (result.isEmpty() || result.get() != ButtonType.OK) {
