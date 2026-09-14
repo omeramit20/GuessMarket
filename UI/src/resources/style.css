@@ -305,6 +305,17 @@
     -fx-background-color: #f0fdf4;
     -fx-text-fill: #16a34a;
 }
+.stat-badge-danger {
+    -fx-background-color: #fef2f2;
+    -fx-text-fill: #dc2626;
+}
+
+.toolbar-secondary {
+    -fx-opacity: 0.85;
+}
+.toolbar-secondary .field-label {
+    -fx-font-size: 10.5px;
+}
 .stat-badge-accent {
     -fx-background-color: #eff6ff;
     -fx-text-fill: #2563eb;

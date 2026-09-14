@@ -295,6 +295,17 @@
     -fx-background-color: #0c2438;
     -fx-text-fill: #38bdf8;
 }
+.stat-badge-danger {
+    -fx-background-color: #2c1212;
+    -fx-text-fill: #f87171;
+}
+
+.toolbar-secondary {
+    -fx-opacity: 0.85;
+}
+.toolbar-secondary .field-label {
+    -fx-font-size: 10.5px;
+}
 
 .list-view {
     -fx-background-color: #1e293b;

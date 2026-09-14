@@ -17,6 +17,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
@@ -31,12 +32,14 @@
             </padding>
             <children>
                 <Label styleClass="app-title" text="Guess Market" />
-                <Label styleClass="field-label" text="Theme:" />
-                <ComboBox fx:id="cbTheme" prefWidth="100.0" />
-                <CheckBox fx:id="chkAnimations" selected="true" text="Animations" />
-                <TextField fx:id="filePathField" editable="false" prefWidth="200.0" promptText="Currently loaded file path..." />
                 <Button fx:id="loadFileBtn" mnemonicParsing="false" onAction="#handleLoadFile" text="Load File" />
+                <TextField fx:id="filePathField" editable="false" prefWidth="200.0" promptText="No file loaded yet" />
                 <ProgressBar fx:id="progressBar" prefWidth="150.0" visible="false" />
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="toolbar-secondary">
+                    <Label styleClass="field-label" text="Theme:" />
+                    <ComboBox fx:id="cbTheme" prefWidth="100.0" />
+                    <CheckBox fx:id="chkAnimations" selected="true" text="Animations" />
+                </HBox>
             </children>
         </FlowPane>
     </top>
@@ -57,8 +60,12 @@
                                                         <!-- קבוצת סוגי אירועים -->
                                                         <HBox alignment="CENTER_LEFT" spacing="8.0">
                                                             <Label styleClass="field-label" text="Type:" />
-                                                            <ToggleButton fx:id="chkTypeLMSR" onAction="#applyFilters" selected="true" styleClass="filter-toggle" text="LMSR" />
-                                                            <ToggleButton fx:id="chkTypeOB" onAction="#applyFilters" selected="true" styleClass="filter-toggle" text="Order Book" />
+                                                            <ToggleButton fx:id="chkTypeLMSR" onAction="#applyFilters" selected="true" styleClass="filter-toggle" text="LMSR">
+                                                                <tooltip><Tooltip text="Automated market maker: trade against the event's own pricing curve, no counterparty needed." /></tooltip>
+                                                            </ToggleButton>
+                                                            <ToggleButton fx:id="chkTypeOB" onAction="#applyFilters" selected="true" styleClass="filter-toggle" text="Order Book">
+                                                                <tooltip><Tooltip text="Peer-to-peer trading: your order fills against other users' buy/sell orders." /></tooltip>
+                                                            </ToggleButton>
                                                         </HBox>
 
                                                         <!-- קבוצת סטטוסים -->
@@ -117,7 +124,7 @@
                                         </HBox>
                                     </bottom>
                                 </BorderPane>
-                                <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
+                                <ScrollPane fx:id="eventDetailsScroll" fitToWidth="true" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
                                     <VBox fx:id="eventDetailsRoot" spacing="6.0">
                                         <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
 
@@ -129,6 +136,7 @@
                                             <Label fx:id="lblWinner" managed="false" styleClass="stat-badge, stat-badge-positive" text="Winner: --" visible="false" />
                                         </FlowPane>
                                         <Label fx:id="lblStateTitle" styleClass="section-title" style="-fx-padding: 6 0 0 0;" text="Current State" />
+                                        <Label fx:id="lblStateSubtitle" styleClass="text-muted" text="--" wrapText="true" />
 
                                         <!-- כרטיסיות האופציות -->
                                         <FlowPane hgap="10.0" vgap="10.0">
@@ -142,9 +150,46 @@
                                             </VBox>
                                         </FlowPane>
 
-                                        <!-- גרף היסטוריית מחיר (בונוס) -->
-                                        <Label styleClass="section-title" style="-fx-padding: 6 0 0 0;" text="Price History" />
-                                        <LineChart fx:id="priceChart" animated="false" legendVisible="true" prefHeight="180.0">
+                                        <!-- טופס מסחר וניהול אירוע - מוקדם בעמוד בכוונה, זו הפעולה המרכזית -->
+                                        <VBox fx:id="tradeFormCard" spacing="10.0" styleClass="card">
+                                            <Label styleClass="section-title" text="Trade / Manage Event" />
+                                            <VBox spacing="8.0">
+                                                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                                    <Label styleClass="field-label" text="Acting as:" />
+                                                    <ComboBox fx:id="cbActiveUser" maxWidth="Infinity" minWidth="100.0" promptText="Select a user" HBox.hgrow="ALWAYS" />
+                                                </HBox>
+                                                <HBox spacing="8.0">
+                                                    <ComboBox fx:id="cbBuyOption" maxWidth="Infinity" minWidth="100.0" promptText="Option" HBox.hgrow="ALWAYS" />
+                                                    <ComboBox fx:id="cbOrderType" minWidth="110.0" prefWidth="110.0" promptText="Order Type" />
+                                                </HBox>
+                                                <HBox spacing="8.0">
+                                                    <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                                        <Label styleClass="field-label" text="Price ($)" />
+                                                        <TextField fx:id="txtOrderPrice" maxWidth="Infinity" minWidth="60.0" promptText="Price" />
+                                                    </VBox>
+                                                    <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                                                        <Label styleClass="field-label" text="Quantity" />
+                                                        <TextField fx:id="txtSharesAmount" maxWidth="Infinity" minWidth="60.0" promptText="Qty" />
+                                                    </VBox>
+                                                </HBox>
+                                            </VBox>
+
+                                            <HBox spacing="10.0">
+                                                <Button fx:id="btnBuy" maxWidth="Infinity" onAction="#handleTradeAction" text="Execute Trade" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="btnOpenEvent" maxWidth="Infinity" onAction="#handleOpenEvent" text="Open Event" HBox.hgrow="ALWAYS" />
+                                            </HBox>
+                                            <Label fx:id="lblOpenHint" managed="false" styleClass="text-muted" text="--" visible="false" wrapText="true" />
+
+                                            <FlowPane fx:id="closeEventBox" hgap="10.0" vgap="10.0" managed="false" styleClass="divider-top" visible="false">
+                                                <ComboBox fx:id="cbWinningOption" prefWidth="200.0" promptText="Winner" />
+                                                <Button fx:id="btnCloseEvent" minWidth="110.0" onAction="#handleCloseEvent" styleClass="button-danger" text="Close Event" />
+                                            </FlowPane>
+                                            <Label fx:id="lblCloseHint" managed="false" styleClass="text-muted" text="--" visible="false" wrapText="true" />
+                                        </VBox>
+
+                                        <!-- גרף היסטוריית מחיר (בונוס) - מוסתר עד שיש בו בפועל נתונים -->
+                                        <Label fx:id="lblPriceChartTitle" managed="false" styleClass="section-title" style="-fx-padding: 6 0 0 0;" text="Price History" visible="false" />
+                                        <LineChart fx:id="priceChart" animated="false" legendVisible="true" managed="false" prefHeight="180.0" visible="false">
                                             <xAxis>
                                                 <NumberAxis label="Trade #" />
                                             </xAxis>
@@ -189,32 +234,6 @@
                                  </columnResizePolicy>
                                         </TableView>
 
-                                        <!-- טופס מסחר וניהול אירוע -->
-                                        <VBox fx:id="tradeFormCard" spacing="10.0" styleClass="card">
-                                            <Label styleClass="section-title" text="Trade / Manage Event" />
-                                            <VBox spacing="8.0">
-                                                <HBox spacing="8.0">
-                                                    <ComboBox fx:id="cbActiveUser" maxWidth="Infinity" minWidth="100.0" promptText="User" HBox.hgrow="ALWAYS" />
-                                                    <ComboBox fx:id="cbBuyOption" maxWidth="Infinity" minWidth="100.0" promptText="Option" HBox.hgrow="ALWAYS" />
-                                                </HBox>
-                                                <HBox spacing="8.0">
-                                                    <ComboBox fx:id="cbOrderType" minWidth="110.0" prefWidth="110.0" promptText="Order Type" />
-                                                    <TextField fx:id="txtOrderPrice" maxWidth="Infinity" minWidth="60.0" promptText="Price" HBox.hgrow="ALWAYS" />
-                                                    <TextField fx:id="txtSharesAmount" maxWidth="Infinity" minWidth="60.0" promptText="Qty" HBox.hgrow="ALWAYS" />
-                                                </HBox>
-                                            </VBox>
-
-                                            <HBox spacing="10.0">
-                                                <Button fx:id="btnBuy" maxWidth="Infinity" onAction="#handleTradeAction" text="Execute Trade" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="btnOpenEvent" maxWidth="Infinity" onAction="#handleOpenEvent" text="Open Event" HBox.hgrow="ALWAYS" />
-                                            </HBox>
-
-                                            <FlowPane fx:id="closeEventBox" hgap="10.0" vgap="10.0" managed="false" style="-fx-padding: 10 0 0 0; -fx-border-color: #e5e7eb; -fx-border-width: 1 0 0 0;" visible="false">
-                                                <ComboBox fx:id="cbWinningOption" prefWidth="200.0" promptText="Winner" />
-                                                <Button fx:id="btnCloseEvent" minWidth="110.0" onAction="#handleCloseEvent" styleClass="button-danger" text="Close Event" />
-                                            </FlowPane>
-                                        </VBox>
-
                                         <!-- טבלת היסטוריה -->
                                         <Label styleClass="section-title" text="Trade History" />
                                         <TableView fx:id="tradeHistoryTable" prefHeight="120.0">
@@ -245,7 +264,7 @@
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                     </padding>
                                 </VBox>
-                                <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+                                <ScrollPane fx:id="userDetailsScroll" fitToWidth="true" style="-fx-background-color: transparent;">
                                     <VBox fx:id="userDetailsRoot" spacing="6.0">
                                     <children>
                                         <Label styleClass="eyebrow" text="USER DETAILS" />
@@ -254,8 +273,8 @@
                                             <Label fx:id="lblUserBalance" styleClass="stat-badge, stat-badge-positive" text="--" />
                                         </FlowPane>
 
-                                        <Label styleClass="section-title" style="-fx-padding: 8 0 0 0;" text="Balance History" />
-                                        <LineChart fx:id="balanceChart" animated="false" legendVisible="false" prefHeight="180.0">
+                                        <Label fx:id="lblBalanceChartTitle" managed="false" styleClass="section-title" style="-fx-padding: 8 0 0 0;" text="Balance History" visible="false" />
+                                        <LineChart fx:id="balanceChart" animated="false" legendVisible="false" managed="false" prefHeight="180.0" visible="false">
                                             <xAxis>
                                                 <NumberAxis label="Step" />
                                             </xAxis>

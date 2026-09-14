@@ -39,3 +39,7 @@ bin/
 
 ### Third-party SDKs (too large for git; bundled in the submission zip instead) ###
 lib/javafx-sdk-*/
+
+### The submission package itself - built artifact, not source ###
+*.zip
+out/submission/

@@ -28,8 +28,15 @@ public class MainController {
     @FXML private VBox eventDetailsRoot;
     @FXML private VBox userDetailsRoot;
     @FXML private VBox tradeFormCard;
+    @FXML private ScrollPane eventDetailsScroll;
+    @FXML private ScrollPane userDetailsScroll;
     @FXML private javafx.scene.chart.LineChart<Number, Number> priceChart;
     @FXML private javafx.scene.chart.LineChart<Number, Number> balanceChart;
+    @FXML private Label lblPriceChartTitle;
+    @FXML private Label lblBalanceChartTitle;
+    @FXML private Label lblStateSubtitle;
+    @FXML private Label lblOpenHint;
+    @FXML private Label lblCloseHint;
 
     @FXML private TextField filePathField;
     @FXML private Button loadFileBtn;
@@ -141,6 +148,14 @@ public class MainController {
 
     @FXML
     public void initialize() {
+        eventParticipantsTable.setPlaceholder(new Label("No one has traded this event yet"));
+        tradeHistoryTable.setPlaceholder(new Label("No trades yet"));
+        buyOrdersTable.setPlaceholder(new Label("No pending buy orders"));
+        sellOrdersTable.setPlaceholder(new Label("No pending sell orders"));
+        portfolioTable.setPlaceholder(new Label("No holdings yet"));
+        userTradeHistoryTable.setPlaceholder(new Label("No trades yet"));
+        userOptionBreakdownTable.setPlaceholder(new Label("No holdings yet"));
+
         colEventName.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getName()));
         colEventStatus.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getStatus()));
 
@@ -354,6 +369,9 @@ public class MainController {
     }
 
     private void updateEventDetails(EventDTO event) {
+        if (eventDetailsScroll != null) {
+            eventDetailsScroll.setVvalue(0);
+        }
         lblSelectedEventName.setText(event.getName());
 
         if (event.getOptions() != null && event.getOptions().size() >= 2) {
@@ -370,12 +388,14 @@ public class MainController {
 
             if ("OrderBook".equals(event.getType())) {
                 lblStateTitle.setText("Current State (Order Book)");
+                lblStateSubtitle.setText("Peer-to-peer trading: your order fills against other users' buy/sell orders.");
                 lblOption1Data.setText(String.format("LAST: $%.2f\nBID: $%.2f | ASK: $%.2f\nMID: $%.2f | SPREAD: $%.2f",
                         opt1.getLast(), opt1.getBid(), opt1.getAsk(), opt1.getMid(), opt1.getSpread()));
                 lblOption2Data.setText(String.format("LAST: $%.2f\nBID: $%.2f | ASK: $%.2f\nMID: $%.2f | SPREAD: $%.2f",
                         opt2.getLast(), opt2.getBid(), opt2.getAsk(), opt2.getMid(), opt2.getSpread()));
             } else {
                 lblStateTitle.setText("Current State (LMSR)");
+                lblStateSubtitle.setText("Automated market maker: trade against the event's own pricing curve, no counterparty needed.");
                 lblOption1Data.setText(String.format("Price: $%.2f\nShares: %d", opt1.getCurrentPrice(), opt1.getSharesBought()));
                 lblOption2Data.setText(String.format("Price: $%.2f\nShares: %d", opt2.getCurrentPrice(), opt2.getSharesBought()));
             }
@@ -404,6 +424,8 @@ public class MainController {
         boolean isActive = "ACTIVE".equals(event.getStatus());
 
         lblEventBalance.setText(String.format("Balance: $%.2f", event.getAccountBalance()));
+        lblEventBalance.getStyleClass().removeAll("stat-badge-positive", "stat-badge-danger");
+        lblEventBalance.getStyleClass().add(event.getAccountBalance() >= 0 ? "stat-badge-positive" : "stat-badge-danger");
         lblCommissionCollected.setText(String.format("Commission Collected: $%.2f", event.getTotalCommissionCollected()));
 
         boolean isClosed = "CLOSED".equals(event.getStatus());
@@ -440,11 +462,25 @@ public class MainController {
         btnOpenEvent.setManaged(isNotActive);
         btnOpenEvent.setDisable(!isMM);
 
+        boolean showOpenHint = isNotActive && !isMM;
+        lblOpenHint.setVisible(showOpenHint);
+        lblOpenHint.setManaged(showOpenHint);
+        if (showOpenHint) {
+            lblOpenHint.setText("Only the Market Maker (" + event.getMarketMaker() + ") can open this event. Select them as \"Acting as\" to open it.");
+        }
+
         btnBuy.setVisible(isActive);
         btnBuy.setManaged(isActive);
 
         closeEventBox.setVisible(isActive && isMM);
         closeEventBox.setManaged(isActive && isMM);
+
+        boolean showCloseHint = isActive && !isMM;
+        lblCloseHint.setVisible(showCloseHint);
+        lblCloseHint.setManaged(showCloseHint);
+        if (showCloseHint) {
+            lblCloseHint.setText("Only the Market Maker (" + event.getMarketMaker() + ") can close this event.");
+        }
 
         // עדכון טבלת היסטוריית המסחר
         if (event.getTradeHistory() != null) {
@@ -463,7 +499,13 @@ public class MainController {
     private void updatePriceChart(EventDTO event) {
         priceChart.getData().clear();
         java.util.List<engine.dto.TradeDTO> history = event.getTradeHistory();
-        if (history == null || history.isEmpty()) return;
+        boolean hasData = history != null && !history.isEmpty();
+
+        lblPriceChartTitle.setVisible(hasData);
+        lblPriceChartTitle.setManaged(hasData);
+        priceChart.setVisible(hasData);
+        priceChart.setManaged(hasData);
+        if (!hasData) return;
 
         java.util.Map<String, javafx.scene.chart.XYChart.Series<Number, Number>> seriesByOption = new java.util.LinkedHashMap<>();
         int index = 0;
@@ -484,12 +526,17 @@ public class MainController {
     }
 
     private void updateUserDetails(String username) {
+        if (userDetailsScroll != null) {
+            userDetailsScroll.setVvalue(0);
+        }
         java.util.Map<String, engine.dto.UserDTO> usersMap = engine.getAllUsers();
         engine.dto.UserDTO user = usersMap.get(username);
 
         if (user != null) {
             lblUserName.setText(user.getName());
             lblUserBalance.setText(String.format("Balance: $%.2f", user.getBalance()));
+            lblUserBalance.getStyleClass().removeAll("stat-badge-positive", "stat-badge-danger");
+            lblUserBalance.getStyleClass().add(user.getBalance() >= 0 ? "stat-badge-positive" : "stat-badge-danger");
 
             // Load user holdings into portfolio table
             java.util.List<engine.dto.UserHoldingDTO> holdings = engine.getUserHoldings(username);
@@ -513,7 +560,14 @@ public class MainController {
     private void updateBalanceChart(String username) {
         balanceChart.getData().clear();
         java.util.List<Double> history = engine.getUserBalanceHistory(username);
-        if (history == null || history.isEmpty()) return;
+        // A single point (just the starting balance) isn't a "history" yet - nothing has happened.
+        boolean hasData = history != null && history.size() > 1;
+
+        lblBalanceChartTitle.setVisible(hasData);
+        lblBalanceChartTitle.setManaged(hasData);
+        balanceChart.setVisible(hasData);
+        balanceChart.setManaged(hasData);
+        if (!hasData) return;
 
         javafx.scene.chart.XYChart.Series<Number, Number> series = new javafx.scene.chart.XYChart.Series<>();
         series.setName(username);
@@ -934,8 +988,14 @@ public class MainController {
             }
             updateTilesView();
             updateEventsSummary();
+
+            // Take the user straight to their new event instead of leaving them to hunt for it
+            eventsTable.getSelectionModel().select(newEvent);
+            eventsTable.scrollTo(newEvent);
+            updateEventDetails(newEvent);
+
             showAlert(Alert.AlertType.INFORMATION, "Event Created",
-                    "\"" + name + "\" was created. " + creator + " is now its Market Maker and can open it from the event's Trade / Manage panel.");
+                    "\"" + name + "\" was created. " + creator + " is now its Market Maker — use the Trade / Manage panel on the right to open it.");
 
         } catch (NumberFormatException e) {
             showAlert(Alert.AlertType.ERROR, "Invalid Input", "Commission, b, initial shares and d must all be valid whole numbers.");
