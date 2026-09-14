@@ -1,0 +1,311 @@
+.root {
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 12px;
+    -fx-background-color: #f4f6f9;
+}
+
+.app-header {
+    -fx-background-color: #e9ecef;
+}
+.app-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #374151;
+}
+
+/* ה-viewport הפנימי של ScrollPane לא תמיד יורש שקיפות מהבקרה עצמה */
+.scroll-pane, .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.check-box, .radio-button {
+    -fx-text-fill: #374151;
+}
+
+/* אריחי אירועים (תצוגת Tiles) - מצב hover ובחירה */
+.event-tile:hover {
+    -fx-border-color: #3b82f6;
+    -fx-effect: dropshadow(three-pass-box, rgba(37,99,235,0.25), 10, 0, 0, 3);
+}
+.event-tile-selected {
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2;
+}
+
+/* ===== משתני צבע/סקאלה גלובליים (JavaFX CSS לא תומך ב-var() אמיתי,
+   אז זו "תיעוד" של הסקאלה - שימוש עקבי בערכים בפועל למטה) =====
+   כחול ראשי: #3b82f6 (accent) / #2563eb (accent-dark/hover)
+   Radius: 4 (inputs) | 8 (cards) | 999 (pills/tags)
+*/
+
+.table-view {
+    -fx-selection-bar: #3b82f6;
+    -fx-border-color: #d2d6de;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #e9ecef;
+}
+
+.button, .toggle-button {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.button:hover, .toggle-button:hover {
+    -fx-background-color: #eff6ff;
+    -fx-border-color: #3b82f6;
+}
+
+.toggle-button:selected {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+    -fx-border-color: #2563eb;
+}
+
+.button {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button:hover {
+    -fx-background-color: #2563eb;
+}
+
+.combo-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+.combo-box:hover {
+    -fx-border-color: #3b82f6;
+}
+
+.filter-toggle {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 999;
+    -fx-background-radius: 999;
+    -fx-text-fill: #374151;
+    -fx-padding: 4 12 4 12;
+    -fx-cursor: hand;
+}
+
+.filter-toggle:hover {
+    -fx-background-color: #f3f4f6;
+}
+
+.filter-toggle:selected {
+    -fx-background-color: #3b82f6;
+    -fx-border-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+}
+
+/* עיצוב כרטיסיות נקיות לפאנל הימני במקום הרקע האפור */
+.card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 2);
+    -fx-padding: 12;
+}
+
+/* שדרוג שורות הטבלה - צבעים מתחלפים (זברה) ואפקט מעבר עכבר */
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+}
+.table-row-cell:odd {
+    -fx-background-color: #f9fafb;
+}
+.table-row-cell:even {
+    -fx-background-color: #ffffff;
+}
+.table-row-cell:hover {
+    -fx-background-color: #eff6ff;
+}
+.table-view:focused .table-row-cell:selected {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+}
+
+/* שדרוג שדות הקלט והקומבו-בוקס - אותו גובה בדיוק לשניהם */
+.text-field, .combo-box {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 4 8 4 8;
+    -fx-pref-height: 30;
+}
+.combo-box .list-cell {
+    -fx-padding: 2 0 2 8;
+    -fx-background-color: transparent;
+    -fx-text-fill: #111827;
+}
+.text-field:focused, .combo-box:focused {
+    -fx-border-color: #3b82f6;
+    -fx-background-color: #ffffff;
+}
+
+.text-area {
+    -fx-background-color: transparent;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+.text-area .content {
+    -fx-background-color: #f9fafb;
+    -fx-background-radius: 4;
+}
+.text-area:focused {
+    -fx-border-color: #3b82f6;
+}
+.text-area:focused .content {
+    -fx-background-color: #ffffff;
+}
+
+/* עיצוב כפתורים כבויים (Disabled) שייראו טוב יותר */
+.button:disabled {
+    -fx-background-color: #e5e7eb;
+    -fx-text-fill: #9ca3af;
+    -fx-border-color: #d1d5db;
+}
+
+.option-card {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10;
+}
+
+/* קונטיינר הכפתור המפוצל */
+.segmented-button-bar {
+    -fx-padding: 10 0 10 0;
+}
+
+/* עיצוב בסיסי לשני חצאי הכפתור */
+.segmented-button-bar .toggle-button {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-text-fill: #555555;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px; /* גופן קטן יותר */
+    -fx-padding: 4 10 4 10; /* ריווח פנימי קטן יותר */
+    -fx-cursor: hand;
+}
+
+/* הצד השמאלי (טבלה) - מעוגל רק שמאלה */
+.segmented-button-bar .left-pill {
+    -fx-background-radius: 999 0 0 999;
+    -fx-border-radius: 999 0 0 999;
+    -fx-border-width: 1 0 1 1; /* מעלים את הגבול הימני כדי למנוע כפילות */
+}
+
+/* הצד הימני (אריחים) - מעוגל רק ימינה */
+.segmented-button-bar .right-pill {
+    -fx-background-radius: 0 999 999 0;
+    -fx-border-radius: 0 999 999 0;
+    -fx-border-width: 1 1 1 0; /* מעלים את הגבול השמאלי */
+}
+
+/* עיצוב בעת מעבר עכבר */
+.segmented-button-bar .toggle-button:hover {
+    -fx-background-color: #f3f4f6;
+}
+
+/* עיצוב החלק הלחוץ / הפעיל */
+.segmented-button-bar .toggle-button:selected {
+    -fx-background-color: #3b82f6;
+    -fx-border-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+}
+
+/* ===== מחלקות טקסט/כפתור לצבעי סמנטיקה (במקום style="" inline ב-FXML) ===== */
+.text-positive {
+    -fx-text-fill: #16a34a;
+}
+
+.text-danger {
+    -fx-text-fill: #ef4444;
+}
+
+.text-accent {
+    -fx-text-fill: #2563eb;
+}
+
+.button-danger {
+    -fx-background-color: #ef4444;
+}
+.button-danger:hover {
+    -fx-background-color: #dc2626;
+}
+
+/* ===== כותרות מדור קלות (טיפוגרפיה בלבד, לא "קופסאות") ===== */
+.section-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-text-fill: #1f2937;
+}
+
+.field-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #555555;
+}
+
+.divider-top {
+    -fx-border-color: #e5e7eb transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 8 0 0 0;
+}
+
+.text-muted {
+    -fx-text-fill: #9ca3af;
+    -fx-font-size: 11.5px;
+}
+
+.panel-footer {
+    -fx-border-color: #e5e7eb transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 12 12 12 12;
+}
+
+/* ===== Eyebrow + heading לכותרות מדור מודגשות (Event Details / User Details) ===== */
+.eyebrow {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #9ca3af;
+}
+
+.detail-heading {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2937;
+}
+
+/* ===== תגיות סטטוס קומפקטיות (Balance / Commission / Winner) ===== */
+.stat-badge {
+    -fx-background-color: #f3f4f6;
+    -fx-background-radius: 999;
+    -fx-text-fill: #374151;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 3 10 3 10;
+}
+.stat-badge-positive {
+    -fx-background-color: #f0fdf4;
+    -fx-text-fill: #16a34a;
+}
+.stat-badge-accent {
+    -fx-background-color: #eff6ff;
+    -fx-text-fill: #2563eb;
+}

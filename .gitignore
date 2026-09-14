@@ -36,3 +36,6 @@ bin/
 *.iws
 *.class
 *.log
+
+### Third-party SDKs (too large for git; bundled in the submission zip instead) ###
+lib/javafx-sdk-*/

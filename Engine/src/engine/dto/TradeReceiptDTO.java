@@ -10,4 +10,16 @@ public class TradeReceiptDTO {
         this.commission = commission;
         this.totalPaid = totalPaid;
     }
+
+    public double getSharesCost() {
+        return sharesCost;
+    }
+
+    public double getCommission() {
+        return commission;
+    }
+
+    public double getTotalPaid() {
+        return totalPaid;
+    }
 }

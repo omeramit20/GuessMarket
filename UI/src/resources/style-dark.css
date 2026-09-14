@@ -1,0 +1,384 @@
+/* ===== Dark skin =====
+   רקע כהה, פונט Consolas (שונה מהפונט הדיפולטי), פיל צבעוני עם ניגודיות כהה לכפתורים
+   כחול-ציאן ראשי: #38bdf8 / #0ea5e9
+*/
+
+.root {
+    -fx-font-family: "Consolas", "Segoe UI", monospace;
+    -fx-font-size: 13px;
+    -fx-background-color: #0f172a;
+}
+
+.table-view {
+    -fx-selection-bar: #38bdf8;
+    -fx-border-color: #334155;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-background-color: #1e293b;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #1e293b;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: #1e293b;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #94a3b8;
+    -fx-font-weight: bold;
+}
+
+.button, .toggle-button {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-text-fill: #e2e8f0;
+}
+
+.button:hover, .toggle-button:hover {
+    -fx-background-color: #26344a;
+    -fx-border-color: #38bdf8;
+}
+
+.toggle-button:selected {
+    -fx-background-color: #38bdf8;
+    -fx-text-fill: #0f172a;
+    -fx-border-color: #0ea5e9;
+}
+
+.button {
+    -fx-background-color: #38bdf8;
+    -fx-border-color: #38bdf8;
+    -fx-text-fill: #0f172a;
+    -fx-font-weight: bold;
+}
+
+.button:hover {
+    -fx-background-color: #0ea5e9;
+    -fx-border-color: #0ea5e9;
+}
+
+.combo-box {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+.combo-box:hover {
+    -fx-border-color: #38bdf8;
+}
+
+.filter-toggle {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-border-radius: 999;
+    -fx-background-radius: 999;
+    -fx-text-fill: #cbd5e1;
+    -fx-padding: 4 12 4 12;
+    -fx-cursor: hand;
+}
+
+.filter-toggle:hover {
+    -fx-background-color: #26344a;
+}
+
+.filter-toggle:selected {
+    -fx-background-color: #38bdf8;
+    -fx-border-color: #38bdf8;
+    -fx-text-fill: #0f172a;
+}
+
+.card {
+    -fx-background-color: #1e293b;
+    -fx-background-radius: 8;
+    -fx-border-color: #334155;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 6, 0, 0, 2);
+    -fx-padding: 12;
+}
+
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+}
+.table-row-cell:odd {
+    -fx-background-color: #1a2740;
+}
+.table-row-cell:even {
+    -fx-background-color: #1e293b;
+}
+.table-row-cell:hover {
+    -fx-background-color: #26344a;
+}
+.table-row-cell .text {
+    -fx-fill: #e2e8f0;
+}
+.table-view:focused .table-row-cell:selected {
+    -fx-background-color: #38bdf8;
+    -fx-text-fill: #0f172a;
+}
+.table-view:focused .table-row-cell:selected .text {
+    -fx-fill: #0f172a;
+}
+
+.text-field, .combo-box {
+    -fx-background-color: #16213a;
+    -fx-border-color: #334155;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 4 8 4 8;
+    -fx-pref-height: 30;
+    -fx-text-fill: #e2e8f0;
+}
+.combo-box .list-cell {
+    -fx-padding: 2 0 2 8;
+    -fx-background-color: transparent;
+    -fx-text-fill: #e2e8f0;
+}
+.text-field:focused, .combo-box:focused {
+    -fx-border-color: #38bdf8;
+    -fx-background-color: #1e293b;
+}
+
+.text-area {
+    -fx-background-color: transparent;
+    -fx-border-color: #334155;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+.text-area .content {
+    -fx-background-color: #16213a;
+    -fx-background-radius: 4;
+}
+.text-area .text {
+    -fx-fill: #e2e8f0;
+}
+.text-area .prompt-text {
+    -fx-fill: #64748b;
+}
+.text-area:focused {
+    -fx-border-color: #38bdf8;
+}
+.text-area:focused .content {
+    -fx-background-color: #1e293b;
+}
+
+.button:disabled {
+    -fx-background-color: #1e293b;
+    -fx-text-fill: #475569;
+    -fx-border-color: #334155;
+}
+
+.option-card {
+    -fx-background-color: #16213a;
+    -fx-border-color: #334155;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10;
+}
+
+.segmented-button-bar {
+    -fx-padding: 10 0 10 0;
+}
+
+.segmented-button-bar .toggle-button {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-text-fill: #cbd5e1;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-padding: 4 10 4 10;
+    -fx-cursor: hand;
+}
+
+.segmented-button-bar .left-pill {
+    -fx-background-radius: 999 0 0 999;
+    -fx-border-radius: 999 0 0 999;
+    -fx-border-width: 1 0 1 1;
+}
+
+.segmented-button-bar .right-pill {
+    -fx-background-radius: 0 999 999 0;
+    -fx-border-radius: 0 999 999 0;
+    -fx-border-width: 1 1 1 0;
+}
+
+.segmented-button-bar .toggle-button:hover {
+    -fx-background-color: #26344a;
+}
+
+.segmented-button-bar .toggle-button:selected {
+    -fx-background-color: #38bdf8;
+    -fx-border-color: #38bdf8;
+    -fx-text-fill: #0f172a;
+}
+
+.text-positive {
+    -fx-text-fill: #4ade80;
+}
+
+.text-danger {
+    -fx-text-fill: #f87171;
+}
+
+.text-accent {
+    -fx-text-fill: #38bdf8;
+}
+
+.button-danger {
+    -fx-background-color: #f87171;
+    -fx-border-color: #f87171;
+    -fx-text-fill: #0f172a;
+}
+.button-danger:hover {
+    -fx-background-color: #ef4444;
+    -fx-border-color: #ef4444;
+}
+
+.section-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #f1f5f9;
+}
+
+.field-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #94a3b8;
+}
+
+.divider-top {
+    -fx-border-color: #334155 transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 8 0 0 0;
+}
+
+.text-muted {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 11.5px;
+}
+
+.panel-footer {
+    -fx-border-color: #334155 transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 12 12 12 12;
+}
+
+.eyebrow {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #64748b;
+}
+
+.detail-heading {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f1f5f9;
+}
+
+.stat-badge {
+    -fx-background-color: #16213a;
+    -fx-background-radius: 999;
+    -fx-text-fill: #cbd5e1;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 3 10 3 10;
+}
+.stat-badge-positive {
+    -fx-background-color: #052e1c;
+    -fx-text-fill: #4ade80;
+}
+.stat-badge-accent {
+    -fx-background-color: #0c2438;
+    -fx-text-fill: #38bdf8;
+}
+
+.list-view {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+.list-cell {
+    -fx-padding: 8 10 8 10;
+    -fx-background-color: transparent;
+    -fx-text-fill: #e2e8f0;
+}
+.list-cell:filled:hover {
+    -fx-background-color: #26344a;
+}
+.list-cell:filled:selected {
+    -fx-background-color: #38bdf8;
+    -fx-text-fill: #0f172a;
+}
+
+.split-pane {
+    -fx-background-color: transparent;
+}
+.split-pane-divider {
+    -fx-background-color: #334155;
+}
+
+.app-header {
+    -fx-background-color: #16213a;
+}
+.app-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f1f5f9;
+}
+
+/* התאמת צבעים בלבד ללשוניות - לא משנה את הצורה/מבנה, רק מונע "אי אפור בהיר" בתוך אפליקציה כהה */
+.tab-pane .tab-header-background {
+    -fx-background-color: #0f172a;
+}
+.tab-pane .tab {
+    -fx-background-color: #1e293b;
+}
+.tab-pane .tab:selected {
+    -fx-background-color: #16213a;
+}
+.tab-pane .tab .tab-label {
+    -fx-text-fill: #94a3b8;
+}
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #38bdf8;
+}
+.tab-pane .tab-content-area {
+    -fx-background-color: #0f172a;
+}
+
+.scroll-pane, .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+Label {
+    -fx-text-fill: #e2e8f0;
+}
+
+.check-box, .radio-button {
+    -fx-text-fill: #e2e8f0;
+}
+.check-box .box, .radio-button .radio {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+}
+.check-box:selected .mark {
+    -fx-background-color: #38bdf8;
+}
+.radio-button:selected .dot {
+    -fx-background-color: #38bdf8;
+}
+
+/* אריחי אירועים (תצוגת Tiles) - מצב hover ובחירה */
+.event-tile:hover {
+    -fx-border-color: #38bdf8;
+    -fx-effect: dropshadow(three-pass-box, rgba(56,189,248,0.35), 10, 0, 0, 3);
+}
+.event-tile-selected {
+    -fx-border-color: #38bdf8;
+    -fx-border-width: 2;
+}
