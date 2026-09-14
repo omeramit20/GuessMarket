@@ -835,20 +835,20 @@ public class GuessMarketEngine implements IGuessMarketEngine {
         if (event.isLMSR()) {
             // חישוב סובסידיה: b * ln(מספר האופציות)
             double subsidy = event.getB() * Math.log(event.getOptions().size());
-//          deleted to allow negative
-//            if (user.getBalance() < subsidy) {
-//                throw new engine.exception.GuessMarketException(String.format("Error: Insufficient funds. Market Maker needs $%.2f to open the LMSR event.", subsidy));
-//            }
+            // Spec: the MM cannot open an event without enough funds to cover it - unlike
+            // regular trades, this is a hard gate, not an allow-then-block case.
+            if (user.getBalance() < subsidy) {
+                throw new engine.exception.GuessMarketException(String.format("Error: Insufficient funds. Market Maker needs $%.2f to open the LMSR event.", subsidy));
+            }
             user.deductFunds(subsidy);
             // הקרן של האירוע כבר אותחלה בבנאי של Event עם b*ln(2), אז אין צורך להוסיף פעמיים
         } else {
             // Order Book: תשלום של (initial * d) וקבלת כמות המניות הראשונית
             int initialShares = (int) event.getInitialPrice();
             double cost = initialShares * event.getDValue();
-//          deleted to allow negative
-//            if (user.getBalance() < cost) {
-//                throw new engine.exception.GuessMarketException(String.format("Error: Insufficient funds. Market Maker needs $%.2f to mint the initial shares.", cost));
-//            }
+            if (user.getBalance() < cost) {
+                throw new engine.exception.GuessMarketException(String.format("Error: Insufficient funds. Market Maker needs $%.2f to mint the initial shares.", cost));
+            }
 
             user.deductFunds(cost);
             event.addFundsToAccount(cost);
