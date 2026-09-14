@@ -9,7 +9,6 @@ import java.net.URL;
 
 public class MainFX extends Application {
 
-    // DON'T FORGET to add javafx stuff into bat file in submission
     @Override
     public void start(Stage primaryStage) throws Exception {
         URL fxmlLocation = getClass().getResource("/main.fxml");

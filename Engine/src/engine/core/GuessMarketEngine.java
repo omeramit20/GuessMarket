@@ -139,6 +139,14 @@ public class GuessMarketEngine implements IGuessMarketEngine {
                 newEvents.put(newEvent.getId(), newEvent);
             }
 
+            // ולידציה של תרגיל 2: MM לא יכול להפנות לאירוע שלא קיים בקובץ
+            for (Integer mmEventId : eventToMM.keySet()) {
+                if (!newEvents.containsKey(mmEventId)) {
+                    throw new engine.exception.GuessMarketException(
+                            "Error: Market Maker '" + eventToMM.get(mmEventId) + "' references event ID " + mmEventId + ", which does not exist in the file.");
+                }
+            }
+
             // עדכון המערכת רק אם כל הבדיקות עברו
             this.currentEvents = newEvents;
             this.currentUsers = newUsers;
