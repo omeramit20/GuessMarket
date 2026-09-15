@@ -393,3 +393,36 @@ Label {
     -fx-border-color: #38bdf8;
     -fx-border-width: 2;
 }
+
+.stat-badge-lg {
+    -fx-font-size: 14px;
+    -fx-padding: 5 14 5 14;
+}
+
+.field-error {
+    -fx-border-color: #f87171;
+    -fx-border-width: 1.5;
+}
+
+.toast {
+    -fx-background-color: #38bdf8;
+    -fx-text-fill: #0f172a;
+    -fx-background-radius: 8;
+    -fx-padding: 10 18 10 18;
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 12, 0, 0, 4);
+}
+
+.tile-status-active {
+    -fx-border-color: #4ade80;
+    -fx-border-width: 0 0 0 4;
+}
+.tile-status-not-active {
+    -fx-border-color: #64748b;
+    -fx-border-width: 0 0 0 4;
+}
+.tile-status-closed {
+    -fx-border-color: #94a3b8;
+    -fx-border-width: 0 0 0 4;
+}

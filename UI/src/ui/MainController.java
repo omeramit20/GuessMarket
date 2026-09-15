@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -19,6 +20,8 @@ public class MainController {
 
     private final engine.core.IGuessMarketEngine engine = new engine.core.GuessMarketEngine();
 
+    @FXML private StackPane appRoot;
+    @FXML private VBox toastContainer;
     @FXML private javafx.scene.layout.BorderPane rootPane;
     @FXML private ComboBox<String> cbTheme;
     @FXML private CheckBox chkAnimations;
@@ -227,6 +230,11 @@ public class MainController {
         cbOrderType.getItems().setAll(Order.OrderType.values());
         cbOrderType.getSelectionModel().select(Order.OrderType.BUY);
 
+        // Live validation hint - flags an obviously invalid number before Execute Trade is even clicked
+        txtSharesAmount.textProperty().addListener((obs, oldV, newV) -> setFieldError(txtSharesAmount, !isValidPositiveInt(newV)));
+        txtOrderPrice.textProperty().addListener((obs, oldV, newV) ->
+                setFieldError(txtOrderPrice, !txtOrderPrice.isDisabled() && !isValidPositiveNumber(newV)));
+
         viewToggleGroup = new ToggleGroup();
         btnTableView.setToggleGroup(viewToggleGroup);
         btnTilesView.setToggleGroup(viewToggleGroup);
@@ -273,7 +281,65 @@ public class MainController {
             case "Forest" -> "/style-forest.css";
             default -> "/style.css";
         };
-        rootPane.getStylesheets().setAll(getClass().getResource(cssFile).toExternalForm());
+        appRoot.getStylesheets().setAll(getClass().getResource(cssFile).toExternalForm());
+    }
+
+    // Non-blocking success feedback - routine confirmations (trade/open/close/create) no longer
+    // interrupt flow with a modal Alert; errors and the irreversible close-event confirmation still do.
+    private void showToast(String message) {
+        Label toast = new Label(message);
+        toast.getStyleClass().add("toast");
+        toastContainer.getChildren().add(toast);
+
+        javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(javafx.util.Duration.millis(180), toast);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+
+        javafx.animation.PauseTransition stay = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(2.2));
+
+        javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(javafx.util.Duration.millis(350), toast);
+        fadeOut.setFromValue(1);
+        fadeOut.setToValue(0);
+        fadeOut.setOnFinished(e -> toastContainer.getChildren().remove(toast));
+
+        new javafx.animation.SequentialTransition(fadeIn, stay, fadeOut).play();
+    }
+
+    // Lets short tables size to their actual content instead of always reserving a fixed
+    // viewport - avoids an internal scrollbar (and the "scroll the table, not the page" trap)
+    // for the common case of a handful of rows. Tables that genuinely have more than maxRows
+    // still scroll internally, which is the expected/useful case for a long list.
+    private void fitTableHeight(TableView<?> table, int itemCount, int maxRows) {
+        double rowHeight = 28;
+        double headerHeight = 28;
+        int visibleRows = itemCount == 0 ? 2 : Math.min(itemCount, maxRows);
+        table.setPrefHeight(headerHeight + visibleRows * rowHeight + 2);
+    }
+
+    private void setFieldError(TextField field, boolean hasError) {
+        if (hasError) {
+            if (!field.getStyleClass().contains("field-error")) field.getStyleClass().add("field-error");
+        } else {
+            field.getStyleClass().remove("field-error");
+        }
+    }
+
+    private boolean isValidPositiveInt(String text) {
+        if (text == null || text.trim().isEmpty()) return true; // don't flag an empty, not-yet-filled field
+        try {
+            return Integer.parseInt(text.trim()) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean isValidPositiveNumber(String text) {
+        if (text == null || text.trim().isEmpty()) return true;
+        try {
+            return Double.parseDouble(text.trim()) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     // Bonus: short animations accompanying app flow, disable-able via chkAnimations (spec cap: <=2s each)
@@ -443,10 +509,13 @@ public class MainController {
         if (isOrderBook) {
             buyOrdersTable.setItems(javafx.collections.FXCollections.observableArrayList(event.getBuyOrders()));
             sellOrdersTable.setItems(javafx.collections.FXCollections.observableArrayList(event.getSellOrders()));
+            fitTableHeight(buyOrdersTable, event.getBuyOrders().size(), 5);
+            fitTableHeight(sellOrdersTable, event.getSellOrders().size(), 5);
         }
 
         // עדכון משתתפים
         eventParticipantsTable.setItems(javafx.collections.FXCollections.observableArrayList(event.getParticipantsHoldings()));
+        fitTableHeight(eventParticipantsTable, event.getParticipantsHoldings().size(), 5);
 
         // אכלוס אפשרויות לסגירה
         cbWinningOption.getItems().clear();
@@ -487,8 +556,10 @@ public class MainController {
             javafx.collections.ObservableList<engine.dto.TradeDTO> trades =
                     javafx.collections.FXCollections.observableArrayList(event.getTradeHistory());
             tradeHistoryTable.setItems(trades);
+            fitTableHeight(tradeHistoryTable, trades.size(), 6);
         } else {
             tradeHistoryTable.getItems().clear();
+            fitTableHeight(tradeHistoryTable, 0, 6);
         }
 
         updatePriceChart(event);
@@ -541,6 +612,7 @@ public class MainController {
             // Load user holdings into portfolio table
             java.util.List<engine.dto.UserHoldingDTO> holdings = engine.getUserHoldings(username);
             portfolioTable.setItems(javafx.collections.FXCollections.observableArrayList(holdings));
+            fitTableHeight(portfolioTable, holdings.size(), 5);
 
             java.util.List<engine.dto.UserEventParticipationDTO> participation = engine.getUserEventParticipation(username);
             cbUserEvent.setItems(javafx.collections.FXCollections.observableArrayList(participation));
@@ -586,12 +658,14 @@ public class MainController {
         userTradeHistoryTable.setManaged(isLMSR);
         if (isLMSR) {
             userTradeHistoryTable.setItems(javafx.collections.FXCollections.observableArrayList(dto.getTradeHistory()));
+            fitTableHeight(userTradeHistoryTable, dto.getTradeHistory().size(), 5);
         }
 
         userOptionBreakdownTable.setVisible(isOrderBook);
         userOptionBreakdownTable.setManaged(isOrderBook);
         if (isOrderBook) {
             userOptionBreakdownTable.setItems(javafx.collections.FXCollections.observableArrayList(dto.getOptionBreakdown()));
+            fitTableHeight(userOptionBreakdownTable, dto.getOptionBreakdown().size(), 5);
         }
 
         boolean showWinner = isLMSR && isClosed;
@@ -644,13 +718,11 @@ public class MainController {
 
                 engine.executeOrderBookOrder(selectedUser, selectedEvent.getId(), optionName, orderType, price, quantity);
 
-                showAlert(Alert.AlertType.INFORMATION, "Order Placed", "Order Book transaction processed successfully.");
+                showToast("Order placed: " + quantity + " " + optionName);
             } else {
                 // לוגיקת LMSR הקודמת
                 engine.dto.TradeReceiptDTO receipt = engine.buyShares(selectedUser, selectedEvent.getId(), selectedOptionIndex, quantity);
-                showAlert(Alert.AlertType.INFORMATION, "Trade Successful",
-                        String.format("Bought %d shares.\nCost: $%.2f\nCommission: $%.2f\nTotal Paid: $%.2f",
-                                quantity, receipt.getSharesCost(), receipt.getCommission(), receipt.getTotalPaid()));
+                showToast(String.format("Bought %d shares — total paid $%.2f", quantity, receipt.getTotalPaid()));
             }
 
             txtSharesAmount.clear();
@@ -710,7 +782,7 @@ public class MainController {
         try {
             // קריאה למנוע לפתיחת האירוע
             engine.openEvent(selectedEvent.getId(), selectedUser);
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Event opened successfully!");
+            showToast("Event opened — trading is now active.");
 
             // רענון טבלת האירועים והסטטוס במסך
             // רענון טבלת האירועים והסטטוס במסך דרך רשימת המקור
@@ -797,6 +869,12 @@ public class MainController {
         for (engine.dto.EventDTO event : filteredEvents) {
             javafx.scene.layout.VBox card = new javafx.scene.layout.VBox(5);
             card.getStyleClass().addAll("card", "event-tile");
+            String statusClass = switch (event.getStatus()) {
+                case "ACTIVE" -> "tile-status-active";
+                case "CLOSED" -> "tile-status-closed";
+                default -> "tile-status-not-active";
+            };
+            card.getStyleClass().add(statusClass);
             card.setPrefWidth(220);
             card.setPrefHeight(160);
             card.setStyle("-fx-cursor: hand;"); // משנה את סמן העכבר כשעוברים על האריח
@@ -862,7 +940,7 @@ public class MainController {
 
         try {
             engine.closeEvent(selectedEvent.getId(), winningOptionIndex);
-            showAlert(Alert.AlertType.INFORMATION, "Event Closed", "The event has been successfully closed and payouts distributed.");
+            showToast("Event closed — payouts distributed.");
 
             engine.dto.EventDTO updatedEvent = engine.getEventById(selectedEvent.getId());
             javafx.collections.ObservableList<engine.dto.EventDTO> sourceList =
@@ -938,14 +1016,26 @@ public class MainController {
             obFields.setManaged(!isLMSR);
         });
 
-        VBox content = new VBox(10.0,
+        Label basicsHeader = new Label("Basics");
+        basicsHeader.getStyleClass().add("section-title");
+        Label pricingHeader = new Label("Pricing & Options");
+        pricingHeader.getStyleClass().add("section-title");
+        pricingHeader.setStyle("-fx-padding: 8 0 0 0;");
+        Label mechanismHeader = new Label("Market Mechanism");
+        mechanismHeader.getStyleClass().add("section-title");
+        mechanismHeader.setStyle("-fx-padding: 8 0 0 0;");
+
+        VBox content = new VBox(8.0,
+                basicsHeader,
                 new Label("Market Maker (creator):"), cbCreator,
                 new Label("Event Name:"), txtName,
                 new Label("Description:"), txtDescription,
+                pricingHeader,
                 new HBox(10.0, new VBox(6.0, new Label("Commission Type:"), cbCommType),
                         new VBox(6.0, new Label("Commission %:"), txtCommission)),
                 new HBox(10.0, new VBox(6.0, new Label("Option 1:"), txtOption1),
                         new VBox(6.0, new Label("Option 2:"), txtOption2)),
+                mechanismHeader,
                 new HBox(15.0, rbLMSR, rbOB),
                 lmsrFields, obFields
         );
@@ -1001,8 +1091,7 @@ public class MainController {
             eventsTable.scrollTo(newEvent);
             updateEventDetails(newEvent);
 
-            showAlert(Alert.AlertType.INFORMATION, "Event Created",
-                    "\"" + name + "\" was created. " + creator + " is now its Market Maker — use the Trade / Manage panel on the right to open it.");
+            showToast("\"" + name + "\" created — " + creator + " is its Market Maker.");
 
         } catch (NumberFormatException e) {
             showAlert(Alert.AlertType.ERROR, "Invalid Input", "Commission, b, initial shares and d must all be valid whole numbers.");

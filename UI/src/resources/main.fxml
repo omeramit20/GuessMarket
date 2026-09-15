@@ -24,7 +24,8 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="rootPane" prefHeight="620.0" prefWidth="940.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MainController">
+<StackPane fx:id="appRoot" prefHeight="620.0" prefWidth="940.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MainController">
+<BorderPane fx:id="rootPane">
     <top>
         <FlowPane alignment="CENTER_LEFT" hgap="10.0" vgap="8.0" styleClass="app-header" BorderPane.alignment="CENTER">
             <padding>
@@ -131,24 +132,37 @@
                                         <Label styleClass="eyebrow" text="EVENT DETAILS" />
                                         <Label fx:id="lblSelectedEventName" styleClass="detail-heading" text="Select an event from the table..." wrapText="true" />
                                         <FlowPane hgap="6.0" vgap="6.0">
-                                            <Label fx:id="lblEventBalance" styleClass="stat-badge, stat-badge-positive" text="Balance: --" />
+                                            <Label fx:id="lblEventBalance" styleClass="stat-badge, stat-badge-positive, stat-badge-lg" text="Balance: --" />
                                             <Label fx:id="lblCommissionCollected" styleClass="stat-badge, stat-badge-accent" text="Commission Collected: --" />
                                             <Label fx:id="lblWinner" managed="false" styleClass="stat-badge, stat-badge-positive" text="Winner: --" visible="false" />
                                         </FlowPane>
-                                        <Label fx:id="lblStateTitle" styleClass="section-title" style="-fx-padding: 6 0 0 0;" text="Current State" />
-                                        <Label fx:id="lblStateSubtitle" styleClass="text-muted" text="--" wrapText="true" />
+                                        <!-- מצב נוכחי, אופציות, וגרף היסטוריית מחיר מקובצים יחד - זו אותה עובדה (מה שווה כל אפשרות), בשתי תצוגות -->
+                                        <VBox spacing="8.0" styleClass="card">
+                                            <Label fx:id="lblStateTitle" styleClass="section-title" text="Current State" />
+                                            <Label fx:id="lblStateSubtitle" styleClass="text-muted" text="--" wrapText="true" />
 
-                                        <!-- כרטיסיות האופציות -->
-                                        <FlowPane hgap="10.0" vgap="10.0">
-                                            <VBox prefWidth="260.0" styleClass="option-card">
-                                                <Label fx:id="lblOpt1Name" styleClass="text-accent" style="-fx-font-weight: bold;" text="Option 1" />
-                                                <Label fx:id="lblOption1Data" text="--" wrapText="true" />
-                                            </VBox>
-                                            <VBox prefWidth="260.0" styleClass="option-card">
-                                                <Label fx:id="lblOpt2Name" styleClass="text-accent" style="-fx-font-weight: bold;" text="Option 2" />
-                                                <Label fx:id="lblOption2Data" text="--" wrapText="true" />
-                                            </VBox>
-                                        </FlowPane>
+                                            <FlowPane hgap="10.0" vgap="10.0">
+                                                <VBox prefWidth="260.0" styleClass="option-card">
+                                                    <Label fx:id="lblOpt1Name" styleClass="text-accent" style="-fx-font-weight: bold;" text="Option 1" />
+                                                    <Label fx:id="lblOption1Data" text="--" wrapText="true" />
+                                                </VBox>
+                                                <VBox prefWidth="260.0" styleClass="option-card">
+                                                    <Label fx:id="lblOpt2Name" styleClass="text-accent" style="-fx-font-weight: bold;" text="Option 2" />
+                                                    <Label fx:id="lblOption2Data" text="--" wrapText="true" />
+                                                </VBox>
+                                            </FlowPane>
+
+                                            <!-- גרף היסטוריית מחיר (בונוס) - מוסתר עד שיש בו בפועל נתונים -->
+                                            <Label fx:id="lblPriceChartTitle" managed="false" styleClass="field-label" style="-fx-padding: 6 0 0 0;" text="Price History" visible="false" />
+                                            <LineChart fx:id="priceChart" animated="false" legendVisible="true" managed="false" prefHeight="180.0" visible="false">
+                                                <xAxis>
+                                                    <NumberAxis label="Trade #" />
+                                                </xAxis>
+                                                <yAxis>
+                                                    <NumberAxis label="Price ($)" />
+                                                </yAxis>
+                                            </LineChart>
+                                        </VBox>
 
                                         <!-- טופס מסחר וניהול אירוע - מוקדם בעמוד בכוונה, זו הפעולה המרכזית -->
                                         <VBox fx:id="tradeFormCard" spacing="10.0" styleClass="card">
@@ -186,17 +200,6 @@
                                             </FlowPane>
                                             <Label fx:id="lblCloseHint" managed="false" styleClass="text-muted" text="--" visible="false" wrapText="true" />
                                         </VBox>
-
-                                        <!-- גרף היסטוריית מחיר (בונוס) - מוסתר עד שיש בו בפועל נתונים -->
-                                        <Label fx:id="lblPriceChartTitle" managed="false" styleClass="section-title" style="-fx-padding: 6 0 0 0;" text="Price History" visible="false" />
-                                        <LineChart fx:id="priceChart" animated="false" legendVisible="true" managed="false" prefHeight="180.0" visible="false">
-                                            <xAxis>
-                                                <NumberAxis label="Trade #" />
-                                            </xAxis>
-                                            <yAxis>
-                                                <NumberAxis label="Price ($)" />
-                                            </yAxis>
-                                        </LineChart>
 
                                         <!-- ספר ההוראות (Order Book) - יוסתר עבור LMSR -->
                                         <VBox fx:id="orderBookContainer" managed="false" spacing="5.0" visible="false">
@@ -270,7 +273,7 @@
                                         <Label styleClass="eyebrow" text="USER DETAILS" />
                                         <Label fx:id="lblUserName" styleClass="detail-heading" text="--" />
                                         <FlowPane hgap="6.0" vgap="6.0">
-                                            <Label fx:id="lblUserBalance" styleClass="stat-badge, stat-badge-positive" text="--" />
+                                            <Label fx:id="lblUserBalance" styleClass="stat-badge, stat-badge-positive, stat-badge-lg" text="--" />
                                         </FlowPane>
 
                                         <Label fx:id="lblBalanceChartTitle" managed="false" styleClass="section-title" style="-fx-padding: 8 0 0 0;" text="Balance History" visible="false" />
@@ -331,3 +334,7 @@
         </TabPane>
     </center>
 </BorderPane>
+    <VBox fx:id="toastContainer" alignment="BOTTOM_CENTER" mouseTransparent="true" spacing="8.0" StackPane.alignment="BOTTOM_CENTER">
+        <padding><Insets bottom="28.0" /></padding>
+    </VBox>
+</StackPane>

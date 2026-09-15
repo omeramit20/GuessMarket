@@ -320,3 +320,40 @@
     -fx-background-color: #eff6ff;
     -fx-text-fill: #2563eb;
 }
+
+/* התג הכי חשוב (יתרה) בולט יותר משאר התגים */
+.stat-badge-lg {
+    -fx-font-size: 14px;
+    -fx-padding: 5 14 5 14;
+}
+
+/* שדה קלט לא תקין - רמז מיידי לפני שליחה */
+.field-error {
+    -fx-border-color: #dc2626;
+    -fx-border-width: 1.5;
+}
+
+/* התראת Toast - משוב לא חוסם לפעולות שהצליחו */
+.toast {
+    -fx-background-color: #1f2937;
+    -fx-text-fill: #ffffff;
+    -fx-background-radius: 8;
+    -fx-padding: 10 18 10 18;
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 12, 0, 0, 4);
+}
+
+/* פס צבע בצד השמאלי של אריח - מזהה סטטוס במבט חטוף */
+.tile-status-active {
+    -fx-border-color: #16a34a;
+    -fx-border-width: 0 0 0 4;
+}
+.tile-status-not-active {
+    -fx-border-color: #9ca3af;
+    -fx-border-width: 0 0 0 4;
+}
+.tile-status-closed {
+    -fx-border-color: #6b7280;
+    -fx-border-width: 0 0 0 4;
+}
