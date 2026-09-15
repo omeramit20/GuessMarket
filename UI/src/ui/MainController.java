@@ -967,7 +967,7 @@ public class MainController {
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Create New Event");
-        dialog.getDialogPane().getStylesheets().setAll(rootPane.getStylesheets());
+        dialog.getDialogPane().getStylesheets().setAll(appRoot.getStylesheets());
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         ComboBox<String> cbCreator = new ComboBox<>();
@@ -1016,14 +1016,14 @@ public class MainController {
             obFields.setManaged(!isLMSR);
         });
 
-        Label basicsHeader = new Label("Basics");
-        basicsHeader.getStyleClass().add("section-title");
-        Label pricingHeader = new Label("Pricing & Options");
-        pricingHeader.getStyleClass().add("section-title");
-        pricingHeader.setStyle("-fx-padding: 8 0 0 0;");
-        Label mechanismHeader = new Label("Market Mechanism");
-        mechanismHeader.getStyleClass().add("section-title");
-        mechanismHeader.setStyle("-fx-padding: 8 0 0 0;");
+        String sectionHeaderStyle = "-fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 10 0 4 0; "
+                + "-fx-border-color: #cbd5e1 transparent transparent transparent; -fx-border-width: 1 0 0 0;";
+        Label basicsHeader = new Label("BASICS");
+        basicsHeader.setStyle(sectionHeaderStyle.replace("10 0 4 0", "0 0 4 0") + "-fx-border-width: 0;");
+        Label pricingHeader = new Label("PRICING & OPTIONS");
+        pricingHeader.setStyle(sectionHeaderStyle);
+        Label mechanismHeader = new Label("MARKET MECHANISM");
+        mechanismHeader.setStyle(sectionHeaderStyle);
 
         VBox content = new VBox(8.0,
                 basicsHeader,

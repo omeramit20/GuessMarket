@@ -360,7 +360,7 @@
     -fx-padding: 5 14 5 14;
 }
 
-.field-error {
+.field-error, .field-error:focused {
     -fx-border-color: #b91c1c;
     -fx-border-width: 1.5;
 }
